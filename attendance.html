@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Attendance | No Login (Students)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      width: 350px;
+    }
+    h2 { text-align: center; margin-bottom: 20px; color: #333; }
+    input, button {
+      width: 100%; padding: 10px; margin: 8px 0;
+      border: 1px solid #ccc; border-radius: 6px;
+    }
+    button {
+      background: #007bff; color: #fff; border: none; cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    .confirmation {
+      display: none; text-align: center; color: green; font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="eventName">Event Attendance</h2>
+    <form id="attendanceForm">
+      <input type="text" id="studentId" placeholder="Student ID" required />
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <input type="text" id="department" placeholder="Department / Course" required />
+      <input type="text" id="yearSection" placeholder="Year & Section (optional)" />
+      <button type="submit">Submit Attendance</button>
+    </form>
+
+    <div class="confirmation" id="confirmationMsg">
+      ✅ Attendance recorded successfully!
+    </div>
+    <p style="text-align:center;">
+      <a href="login.html" style="color:red;">Logout</a>
+    </p>
+  </div>
+
+  <script>
+    // 🧠 Check if admin is logged in
+    if(!localStorage.getItem("loggedInUser")) {
+  alert("Please log in first!");
+  window.location.href = "login.html";
+}
+
+    // 🧾 Get event from QR URL
+    const params = new URLSearchParams(window.location.search);
+    const eventName = params.get('event') || "General Assembly 2025";
+    document.getElementById('eventName').textContent = eventName;
+
+    const form = document.getElementById('attendanceForm');
+    const confirmation = document.getElementById('confirmationMsg');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const record = {
+        studentId: document.getElementById('studentId').value.trim(),
+        fullName: document.getElementById('fullName').value.trim(),
+        department: document.getElementById('department').value.trim(),
+        yearSection: document.getElementById('yearSection').value.trim(),
+        event: eventName,
+        timestamp: new Date().toLocaleString()
+      };
+
+      // Save record locally for dashboard display
+let allRecords = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
+allRecords.push(record);
+localStorage.setItem("attendanceRecords", JSON.stringify(allRecords));
+
+console.log("📋 Attendance Recorded:", record);
+
+
+      // Option: send to Google Sheets or backend
+      // fetch("YOUR_GOOGLE_SCRIPT_URL", { method: "POST", body: JSON.stringify(record) });
+
+      form.reset();
+      confirmation.textContent = `✅ Attendance recorded for ${eventName}.`;
+      confirmation.style.display = "block";
+    });
+
+    // Logout function
+    document.querySelector("a[href='login.html']").addEventListener("click", ()=>{
+      localStorage.removeItem("loggedInUser");
+    });
+  </script>
+</body>
+</html>

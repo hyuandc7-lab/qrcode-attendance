@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | QR Attendance</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h2 { margin: 0; }
+    header button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    main {
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+    tr:nth-child(even) { background: #f2f2f2; }
+    .no-data {
+      text-align: center;
+      margin-top: 20px;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h2>📊 Admin Dashboard</h2>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <main>
+    <h3>Student Attendance Records</h3>
+    <table id="attendanceTable">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Full Name</th>
+          <th>Department</th>
+          <th>Year & Section</th>
+          <th>Event</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+    <p class="no-data" id="noDataMsg">No attendance records found yet.</p>
+  </main>
+
+  <script>
+    // 🧠 Check login
+if(!localStorage.getItem("loggedInUser")) {
+  alert("Please log in first!");
+  window.location.href = "login.html";
+    }
+
+    // 🧾 Retrieve attendance data (simulated using localStorage for now)
+    const records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
+    const tableBody = document.getElementById("tableBody");
+    const noDataMsg = document.getElementById("noDataMsg");
+
+    if(records.length > 0) {
+      noDataMsg.style.display = "none";
+      records.forEach(r => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${r.studentId}</td>
+          <td>${r.fullName}</td>
+          <td>${r.department}</td>
+          <td>${r.yearSection}</td>
+          <td>${r.event}</td>
+          <td>${r.timestamp}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // 🚪 Logout
+    document.getElementById("logoutBtn").addEventListener("click", ()=>{
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "login.html";
+    });
+  </script>
+
+</body>
+</html>
